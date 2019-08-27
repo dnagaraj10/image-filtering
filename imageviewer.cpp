@@ -44,12 +44,12 @@ bool ImageViewer::loadFile(const QString &fileName)
 
         QLinearGradient gradient(p1, p2);
         gradient.setColorAt(0, Qt::transparent);
-        gradient.setColorAt(1, QColor(191, 212, 28, 255));
+        gradient.setColorAt(1, QColor(255, 255, 255, 255));
 
         QPainter p(&newImage);
         p.fillRect(0, 0, newImage.width(), newImage.height(), gradient);
 
-        gradient.setColorAt(0,QColor(191, 212, 28, 255));
+        gradient.setColorAt(0,QColor(0, 0, 0, 255));
         gradient.setColorAt(1, Qt::transparent);
         p.fillRect(0,0, newImage.width(), newImage.height(), gradient);
 

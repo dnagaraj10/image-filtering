@@ -39,6 +39,8 @@ bool ImageViewer::loadFile(const QString &fileName)
         return false;
     }
 
+/* Gradient Filtering Algorithm
+
         QPoint p1, p2;
         p2.setY(newImage.height());
 
@@ -54,6 +56,7 @@ bool ImageViewer::loadFile(const QString &fileName)
         p.fillRect(0,0, newImage.width(), newImage.height(), gradient);
 
         p.end();
+*/
 
     setImage(newImage);
 

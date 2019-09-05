@@ -8,6 +8,7 @@
 #endif
 #endif
 
+
 ImageViewer::ImageViewer(QWidget *parent)
    : QMainWindow(parent), imageLabel(new QLabel),
      scrollArea(new QScrollArea), scaleFactor(1)
@@ -29,17 +30,50 @@ ImageViewer::ImageViewer(QWidget *parent)
 
 bool ImageViewer::loadFile(const QString &fileName)
 {
+
     QImageReader reader(fileName);
-    reader.setAutoTransform(true);
-    QImage newImage = reader.read();
-    if (newImage.isNull()) {
+    // reader.setAutoTransform(true);
+    QImage srcImage1 = reader.read();
+    if (srcImage1.isNull()) {
         QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
                                  tr("Cannot load %1: %2")
                                  .arg(QDir::toNativeSeparators(fileName), reader.errorString()));
         return false;
     }
 
-/* Gradient Filtering Algorithm
+    QImage srcImage2;
+    QImage *temp = new QImage("/users/divya/desktop/im2.jpg");
+        srcImage2 = *temp;
+
+    QImage *p_destImage = new QImage(2048,2048,QImage::Format_RGB32);
+       QImage destImage = *p_destImage; //making a new rgb image with same dim as input
+
+        QVector<QRgb> colorTable(256);
+        for (int i = 0; i < 255; i++)
+            colorTable[i] = qRgb(255 - i, i, i);
+        srcImage2.setColorTable(colorTable);
+        srcImage2 = srcImage1.convertToFormat(QImage::Format_RGB32); //converting from 8 bpp to 32 bpp - needed?
+
+
+if (srcImage2.width() == srcImage1.width() && srcImage2.height() == srcImage1.height()) {
+
+    for(int x(0); x < srcImage1.width(); x++)
+        for(int y (0); y < srcImage1.height(); y++) {
+            QColor curr = srcImage1.pixel(x,y);
+            QColor curr1 = srcImage2.pixel(x,y);
+            int destColor = curr.red() + curr1.red(); //adding both pixel values
+            QColor *pdest = new QColor(destColor,destColor,destColor);
+            QColor dest = *pdest;
+            destImage.setPixelColor(x,y, dest); //can we use 8 bpp directly?
+    }
+    setImage(destImage);
+}
+
+else {
+    setImage(srcImage1);
+}
+
+/* Gradient Filtering Alg
 
         QPoint p1, p2;
         p2.setY(newImage.height());
@@ -56,13 +90,13 @@ bool ImageViewer::loadFile(const QString &fileName)
         p.fillRect(0,0, newImage.width(), newImage.height(), gradient);
 
         p.end();
+
+        setImage(newImage);
+
 */
-
-    setImage(newImage);
-
     setWindowFilePath(fileName);
 
-    const QString message = tr("Opened \"%1\", %2x%3, Depth: %4")
+    const QString message = tr("Combined im2.jpg with \"%1\", %2x%3, Depth: %4")
         .arg(QDir::toNativeSeparators(fileName)).arg(image.width()).arg(image.height()).arg(image.depth());
     statusBar()->showMessage(message);
     return true;
